@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{block.super}}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+  <div class="row" style="background-color: #444; color: #FFF; padding: 30px">
+    <div class="col-sm">
+      <fieldset>
+        <legend>Estratégia de seleção de atributo</legend>
+        
+      </fieldset>
+    </div>
+  </div>
+
+  <div class="row" style="background-color: #777; color: #FFF; padding: 20px">
+    <div class="col-sm">
+    </div>
+  </div>
+
+  <div class="row" style="margin: 10px 0px; height: 100%">
+    <div class="col-sm-8 no-float">
+      Here, the decision tree draw
+    </div>
+    <div class="col-sm-4 no-float" style="background-color: #444; padding: 10px; height: 100%">
+      <h5 style="color: #FFF"><center>Controle aqui a construção da árvore</center></h5>
+      <button type="button" class="player">
+        <i class="fa fa-backward" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="player">
+        <i class="fa fa-forward" aria-hidden="true"></i>
+      </button>
+
+      <h6 style="color: #FFF">Atributos</h6>
+    </div>
+  </div>
+</div>
+<!-- /.container -->
+
+{% endblock %}
