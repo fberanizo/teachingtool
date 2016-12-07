@@ -4,10 +4,11 @@ import numpy, pandas
 from sklearn.base import BaseEstimator, ClassifierMixin
 from collections import deque
 from gain import *
+from gini import *
 
 class DecisionTree:
     """Classe que implementa uma árvore de decisão para classificação."""
-    def __init__(self, X, y, attributes, attribute_selection_method='gain'):
+    def __init__(self, X, y, attributes, attribute_selection_method='gini'):
         self.X = X
         self.y = y
         self.attributes = attributes
@@ -44,9 +45,9 @@ class DecisionTree:
 
             # Calcula métrica de seleção de atributo com base no critério definido no construtor
             if self.attribute_selection_method == 'gain':
-                gains = self.calculate_information_gain(X_partition, y_partition)
+                gains = self.calculate_information_gain_metric(X_partition, y_partition)
             elif self.attribute_selection_method == 'gini':
-                pass
+                gains = self.calculate_gini_index_metric(X_partition, y_partition)
             else:
                 raise Exception('Método de seleção de atributo não implementado.')
 
@@ -62,11 +63,19 @@ class DecisionTree:
                 node['children'].append(child)
                 self.queue.append(child)
 
-    def calculate_information_gain(self, X_partition, y_partition):
+    def calculate_information_gain_metric(self, X_partition, y_partition):
         """."""
         gains = []
         for index, attribute in enumerate(self.attributes):
             gain_value, partitions = gain(X_partition[:,index], y_partition)
+            gains.append((index, attribute, gain_value, partitions))
+        return gains
+
+    def calculate_gini_index_metric(self, X_partition, y_partition):
+        """."""
+        gains = []
+        for index, attribute in enumerate(self.attributes):
+            gain_value, partitions = gini(X_partition[:,index], y_partition)
             gains.append((index, attribute, gain_value, partitions))
         return gains
 
