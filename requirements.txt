@@ -3,3 +3,5 @@ plotly>=1.12.11
 numpy>=1.11
 whitenoise==2.0.6
 gunicorn==19.6.0
+scipy>=0.15.1
+scikit-learn>=0.18
