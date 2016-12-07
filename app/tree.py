@@ -51,8 +51,10 @@ class DecisionTree:
                 raise Exception('Método de seleção de atributo não implementado.')
 
             index, attribute, gain_value, partitions = max(gains, key=lambda item: item[2])
-            
+
             node['label'] = attribute + '?'
+
+            self.attributes.remove(attribute)
 
             # Cria um nó para cada partição
             for partition in partitions:
@@ -72,7 +74,9 @@ class DecisionTree:
 dataset = pandas.read_csv('./datasets/zoo/zoo.data', sep=',', header=None).as_matrix()
 X = dataset[1:,1:]
 y = dataset[1:,0]
-attributes = dataset[0,:-1]
+attributes = dataset[0,:-1].tolist()
 clf = DecisionTree(X, y, attributes)
+clf.create_node()
+clf.create_node()
 clf.create_node()
 print(clf.root)
