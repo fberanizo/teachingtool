@@ -15,7 +15,7 @@ def gini(X_partition, y_partition):
         partitions.append(partition)
         partition_gini = gini_index(y_partition[partition])
         total -= prob * partition_gini
-    return total, partitions
+    return total, partitions, values
 
 def gini_index(y_partition):
     """Calcula medida de informação para o conjunto de dados."""

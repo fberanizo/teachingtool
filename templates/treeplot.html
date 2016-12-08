@@ -7,38 +7,49 @@
 
 {% block content %}
 
+<form id="form" method="post" action="/app/">
+{% csrf_token %}
 <div class="container-fluid">
-  <div class="row" style="background-color: #444; color: #FFF; padding: 30px">
+  <div class="row" style="padding: 30px">
     <div class="col-sm">
       <fieldset>
         <legend>Estratégia de seleção de atributo</legend>
-        
+
+          <input type="radio" name="attribute_selection_strategy" id="attribute_selection_strategy_gain" value="gain" checked="checked"/>
+          <label for="attribute_selection_strategy_gain">Ganho de Informação</label>
+          <input type="radio" name="attribute_selection_strategy" id="attribute_selection_strategy_gini" value="gini"/>
+          <label for="attribute_selection_strategy_gini">Índice Gini</label>
+
       </fieldset>
     </div>
   </div>
 
-  <div class="row" style="background-color: #777; color: #FFF; padding: 20px">
+  <div class="row" style="padding: 20px">
     <div class="col-sm">
     </div>
   </div>
 
   <div class="row" style="margin: 10px 0px; height: 100%">
     <div class="col-sm-8 no-float">
-      Here, the decision tree draw
+      {{plot|safe}}
     </div>
-    <div class="col-sm-4 no-float" style="background-color: #444; padding: 10px; height: 100%">
-      <h5 style="color: #FFF"><center>Controle aqui a construção da árvore</center></h5>
-      <button type="button" class="player">
+    <div class="col-sm-4 no-float" style="padding: 10px; height: 100%">
+      <h5><center>Controle aqui a construção da árvore</center></h5>
+      <button type="submit" name="backward">
         <i class="fa fa-backward" aria-hidden="true"></i>
       </button>
-      <button type="button" class="player">
+      <button type="submit" name="forward">
         <i class="fa fa-forward" aria-hidden="true"></i>
       </button>
 
-      <h6 style="color: #FFF">Atributos</h6>
+      <h6>Atributos</h6>
+      {% for name, metric in attributes %}
+          <p>{{name}}, {{metric}}</p>
+      {% endfor %}
     </div>
   </div>
 </div>
+</form>
 <!-- /.container -->
 
 {% endblock %}

@@ -5,8 +5,8 @@ import numpy, math
 def gain(X_partition, y_partition):
     """Calcula medida de ganho de informação."""
     info_partition = info(y_partition)
-    info_attr, partitions = info_attribute(X_partition, y_partition)
-    return (info_partition - info_attr), partitions
+    info_attr, partitions, values = info_attribute(X_partition, y_partition)
+    return (info_partition - info_attr), partitions, values
 
 def info(y_partition):
     """Calcula medida de informação para o conjunto de dados."""
@@ -33,4 +33,4 @@ def info_attribute(X_partition, y_partition):
         partitions.append(partition)
         partition_info = info(y_partition[partition])
         total += prob * partition_info
-    return total, partitions
+    return total, partitions, values
