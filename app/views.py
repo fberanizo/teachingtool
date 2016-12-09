@@ -12,8 +12,8 @@ class TreePlotView(TemplateView):
 
     def __init__(self):
         # Lê conjunto de dados "zoo"
-        PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-        dataset = pandas.read_csv(PROJECT_ROOT + '/datasets/zoo/zoo.data', sep=',', header=None).as_matrix()
+        self.PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+        dataset = pandas.read_csv(self.PROJECT_ROOT + '/datasets/zoo/zoo.data', sep=',', header=None).as_matrix()
         X = dataset[1:,1:-1]
         y = dataset[1:,-1]
         self.attributes = dataset[0,1:-1].tolist()

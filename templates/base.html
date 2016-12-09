@@ -8,6 +8,8 @@
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=UnifrakturMaguntia">
+  <link rel="stylesheet" href="{% static 'css/jqmath-0.4.3.css' %}">
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   {% endblock %}
 </head>
@@ -21,12 +23,35 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+  <script src="{% static 'js/jqmath-etc-0.4.5.min.js' %}" charset="utf-8"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script type="text/javascript">
   $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
     $('input[type=radio]').on('change', function() {
         $(this).closest("form").submit();
+    });
+
+    $('label[for="attribute_selection_strategy_gain"]').popover({
+      title: 'Ganho de Informação',
+      content: '<small>A informação necessária para classificar uma amostra no conjunto de dados D é dada por: $$Entropy(D) = -∑↙{I=1}↖M prob_{classe I} log_2(prob_{classe I})$$<br>Um atributo A pode ser usado para criar partições D_1,..., D_V. Após utilizá-lo, a informação necessária para classificar uma amostra é:<br>$$Info_A(D) = {|D_1|}/{|D|} Entropy(D_1) + ... + {|D_V|}/{|D|} Entropy(D_V)$$<br><b>A medida de ganho de informação é a diferença entre Info para o conjunto original e a Info após o uso do atributo A no particionamento</b>. <br> $$Gain(A) = Info(D) − Info_A(D)$$</small>',
+      placement: 'bottom',
+      trigger: 'hover',
+      html: true
+    }).on('inserted.bs.popover', function() {
+      var div = document.getElementsByClassName("popover")[0];
+      M.parseMath(div);
+    });
+
+    $('label[for="attribute_selection_strategy_gini"]').popover({
+      title: 'Índice de Gini',
+      content: '<small>É uma medida de heterogeneidade dos dados. Para um problema de c classes, o Índice de Gini é dado por: $$gini(D) = 1 - ∑↙{i=1}↖c prob(i/nó) em D$$<br>O valor Gini é a diferença entre a medida antes e após o uso de atributo para particionamento:<br>$$Gini = ∑↙{i=1}↖{Total partições} prob_{part_i} gini(D_i)$$</small>',
+      placement: 'bottom',
+      trigger: 'hover',
+      html: true
+    }).on('inserted.bs.popover', function() {
+      var div = document.getElementsByClassName("popover")[0];
+      M.parseMath(div);
     });
   });
   </script>

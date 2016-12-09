@@ -11,9 +11,9 @@
 
   <div class="row" style="margin: 10px 0px; height: 100%">
     <div class="col-sm-8 no-float">
-      <h2>Implementação didática de árvore de decisão</h2>
+      <h3>Implementação didática de seleção de atributos em árvore de decisão</h3>
 
-      <p></p>
+      <p>Na construção da árvore, para cada nó o algoritmo escolhe a "melhor" partição dos dados. Quando a árvore é usada para selecionar atributos, todos os atributos que não aparecem na árvore são considerados irrelevantes. Esta estratégia é denominada <b>Indução por Árvores de Decisão</b>.</p>
 
       {{plot|safe}}
     </div>
@@ -28,17 +28,19 @@
           <input type="radio" name="attribute_selection_strategy" id="attribute_selection_strategy_gini" value="gini" {% if attribute_selection_method == 'gini' %} checked="checked" {% endif %} />
         Índice Gini</label>
 
+        <div id="popover"></div>
+
         <p>&nbsp;</p>
 
         <h5>Controle aqui a construção da árvore</h5>
         <button type="submit" name="backward" class="btn btn-default" {% if used_attributes == 0 %} disabled="disabled" {% endif %}>
-          <span class="fa fa-backward" aria-hidden="true"></span> Remover Vértice
+          <span class="fa fa-backward" aria-hidden="true"></span> Remover Nó
         </button>
         <button type="submit" name="forward" class="btn btn-default" {% if queue|length == 0 %} disabled="disabled" {% endif %}>
-          Adicionar Vértice <span class="fa fa-forward" aria-hidden="true"></span>
+          Adicionar Nó <span class="fa fa-forward" aria-hidden="true"></span>
         </button>
 
-        <p>&nbsp;</p>
+        <p style="margin-top: 10px"><a data-toggle="modal" href="#" data-target="#source_modal">Ver código fonte</a></p>
 
         <h5>Próxima partição: {{partition}}</h5>
 
@@ -47,6 +49,141 @@
             <button type="button" class="btn {% if forloop.first %} btn-success {% else %} btn-warning {% endif %}" data-toggle="tooltip" data-placement="top" title="{{metric_name}}: {{metric}}" style="margin-bottom: 10px">{{name}}</button>
         {% endfor %}
       </form>
+    </div>
+  </div>
+</div>
+
+<!-- Large modal -->
+
+<div id="source_modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Código fonte</h4>
+      </div>
+    <div class="modal-content">
+      <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">create_node</span>(<span style="color: #007020">self</span>):
+        <span style="color: #DD4422">&quot;&quot;&quot;Cria um nó da árvore de decisão. &quot;&quot;&quot;</span>
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">len</span>(<span style="color: #007020">self</span><span style="color: #333333">.</span>queue) <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            node <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>queue<span style="color: #333333">.</span>popleft()
+
+            <span style="color: #888888"># Cria uma aresta conectando este nó ao pai</span>
+            <span style="color: #008800; font-weight: bold">if</span> node[<span style="background-color: #fff0f0">&#39;parent&#39;</span>] <span style="color: #000000; font-weight: bold">is</span> <span style="color: #000000; font-weight: bold">not</span> <span style="color: #007020">None</span>:
+                <span style="color: #007020">self</span><span style="color: #333333">.</span>edges<span style="color: #333333">.</span>append((node[<span style="background-color: #fff0f0">&#39;parent&#39;</span>], node[<span style="background-color: #fff0f0">&#39;id&#39;</span>]))
+
+            X_partition <span style="color: #333333">=</span> node[<span style="background-color: #fff0f0">&#39;X_partition&#39;</span>]
+            y_partition <span style="color: #333333">=</span> node[<span style="background-color: #fff0f0">&#39;y_partition&#39;</span>]
+
+            <span style="color: #888888"># Se os rótulos em y são todos da mesma classe C, então a decisão é C</span>
+            classes <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>unique(y_partition)
+            <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">len</span>(classes) <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>:
+                node[<span style="background-color: #fff0f0">&#39;label&#39;</span>] <span style="color: #333333">=</span> classes[<span style="color: #0000DD; font-weight: bold">0</span>]
+                node[<span style="background-color: #fff0f0">&#39;type&#39;</span>] <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;decision&#39;</span>
+                <span style="color: #007020">self</span><span style="color: #333333">.</span>nodes<span style="color: #333333">.</span>append(node)
+                <span style="color: #008800; font-weight: bold">return</span>
+
+            <span style="color: #888888"># Se a lista de atributos está vazia, então a decisão é a classe majoritária de y</span>
+            <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">len</span>(<span style="color: #007020">self</span><span style="color: #333333">.</span>remaining_attributes) <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+                unique, pos <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>unique(y_partition, return_inverse<span style="color: #333333">=</span><span style="color: #007020">True</span>)
+                counts <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>bincount(pos)
+                node[<span style="background-color: #fff0f0">&#39;label&#39;</span>] <span style="color: #333333">=</span> unique[counts<span style="color: #333333">.</span>argmax()]
+                node[<span style="background-color: #fff0f0">&#39;type&#39;</span>] <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;decision&#39;</span>
+                <span style="color: #007020">self</span><span style="color: #333333">.</span>nodes<span style="color: #333333">.</span>append(node)
+                <span style="color: #008800; font-weight: bold">return</span>
+
+            <span style="color: #888888"># Calcula métrica de seleção de atributo com base no critério definido no construtor</span>
+            attributes <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>calculate_attribute_selection_metric(X_partition, y_partition)
+
+            <span style="color: #888888"># Escolhe o atributo com maior métrica</span>
+            best_attribute <span style="color: #333333">=</span> <span style="color: #007020">max</span>(attributes, key<span style="color: #333333">=</span><span style="color: #008800; font-weight: bold">lambda</span> item: item[<span style="background-color: #fff0f0">&#39;metric&#39;</span>])
+
+            node[<span style="background-color: #fff0f0">&#39;label&#39;</span>] <span style="color: #333333">=</span> best_attribute[<span style="background-color: #fff0f0">&#39;attribute&#39;</span>]
+            <span style="color: #007020">self</span><span style="color: #333333">.</span>nodes<span style="color: #333333">.</span>append(node)
+
+            <span style="color: #007020">self</span><span style="color: #333333">.</span>remaining_attributes<span style="color: #333333">.</span>remove(<span style="color: #007020">self</span><span style="color: #333333">.</span>attributes<span style="color: #333333">.</span>index(best_attribute[<span style="background-color: #fff0f0">&#39;attribute&#39;</span>]))
+
+            <span style="color: #888888"># Cria um nó para cada partição</span>
+            <span style="color: #008800; font-weight: bold">for</span> partition, value <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">zip</span>(best_attribute[<span style="background-color: #fff0f0">&#39;partitions&#39;</span>], best_attribute[<span style="background-color: #fff0f0">&#39;values&#39;</span>]):
+                child <span style="color: #333333">=</span> <span style="color: #007020">dict</span>([(<span style="background-color: #fff0f0">&#39;id&#39;</span>, <span style="color: #007020">self</span><span style="color: #333333">.</span>id_pool), (<span style="background-color: #fff0f0">&#39;label&#39;</span>, <span style="color: #007020">None</span>), (<span style="background-color: #fff0f0">&#39;type&#39;</span>, <span style="background-color: #fff0f0">&#39;question&#39;</span>), (<span style="background-color: #fff0f0">&#39;partition&#39;</span>, partition), (<span style="background-color: #fff0f0">&#39;X_partition&#39;</span>, node[<span style="background-color: #fff0f0">&#39;X_partition&#39;</span>][partition]), (<span style="background-color: #fff0f0">&#39;y_partition&#39;</span>, node[<span style="background-color: #fff0f0">&#39;y_partition&#39;</span>][partition]), (<span style="background-color: #fff0f0">&#39;value&#39;</span>, value), (<span style="background-color: #fff0f0">&#39;parent&#39;</span>, node[<span style="background-color: #fff0f0">&#39;id&#39;</span>]), (<span style="background-color: #fff0f0">&#39;children&#39;</span>, [])])
+                node[<span style="background-color: #fff0f0">&#39;children&#39;</span>]<span style="color: #333333">.</span>append(child)
+                <span style="color: #007020">self</span><span style="color: #333333">.</span>queue<span style="color: #333333">.</span>append(child)
+                <span style="color: #007020">self</span><span style="color: #333333">.</span>id_pool <span style="color: #333333">+=</span> <span style="color: #0000DD; font-weight: bold">1</span>
+
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">calculate_attribute_selection_metric</span>(<span style="color: #007020">self</span>, X_partition, y_partition):
+        <span style="color: #DD4422">&quot;&quot;&quot;Retorna um dict com métrica de seleção e as partições que o atributo realiza.&quot;&quot;&quot;</span>
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>attribute_selection_method <span style="color: #000000; font-weight: bold">not</span> <span style="color: #000000; font-weight: bold">in</span> [<span style="background-color: #fff0f0">&#39;gain&#39;</span>, <span style="background-color: #fff0f0">&#39;gini&#39;</span>]:
+            <span style="color: #008800; font-weight: bold">raise</span> <span style="color: #FF0000; font-weight: bold">Exception</span>(<span style="background-color: #fff0f0">&#39;Método de seleção de atributo não implementado.&#39;</span>)
+        <span style="color: #008800; font-weight: bold">else</span>:
+            attributes <span style="color: #333333">=</span> []
+            <span style="color: #008800; font-weight: bold">for</span> index <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>remaining_attributes:
+                <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>attribute_selection_method <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&#39;gain&#39;</span>:
+                    metric, partitions, values <span style="color: #333333">=</span> gain<span style="color: #333333">.</span>gain(X_partition[:,index], y_partition)
+                <span style="color: #008800; font-weight: bold">elif</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>attribute_selection_method <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&#39;gini&#39;</span>:
+                    metric, partitions, values <span style="color: #333333">=</span> gini<span style="color: #333333">.</span>gini(X_partition[:,index], y_partition)
+                attributes<span style="color: #333333">.</span>append({<span style="background-color: #fff0f0">&#39;attribute&#39;</span>: <span style="color: #007020">self</span><span style="color: #333333">.</span>attributes[index], <span style="background-color: #fff0f0">&#39;metric&#39;</span>: metric, <span style="background-color: #fff0f0">&#39;partitions&#39;</span>: partitions, <span style="background-color: #fff0f0">&#39;values&#39;</span>: values})
+            <span style="color: #008800; font-weight: bold">return</span> attributes
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">gain</span>(X_partition, y_partition):
+    <span style="color: #DD4422">&quot;&quot;&quot;Calcula medida de ganho de informação.&quot;&quot;&quot;</span>
+    info_partition <span style="color: #333333">=</span> info(y_partition)
+    info_attr, partitions, values <span style="color: #333333">=</span> info_attribute(X_partition, y_partition)
+    <span style="color: #008800; font-weight: bold">return</span> (info_partition <span style="color: #333333">-</span> info_attr), partitions, values
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">info</span>(y_partition):
+    <span style="color: #DD4422">&quot;&quot;&quot;Calcula medida de informação para o conjunto de dados.&quot;&quot;&quot;</span>
+    total <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+    partition_size <span style="color: #333333">=</span> y_partition<span style="color: #333333">.</span>size
+    values, indices <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>unique(y_partition, return_inverse<span style="color: #333333">=</span><span style="color: #007020">True</span>)
+    counts <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>bincount(indices)
+    <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">len</span>(values) <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">1</span>:
+        <span style="color: #008800; font-weight: bold">for</span> value, count <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">zip</span>(values, counts):
+            prob <span style="color: #333333">=</span> count <span style="color: #333333">/</span> <span style="color: #007020">float</span>(partition_size)
+            total <span style="color: #333333">-=</span> prob <span style="color: #333333">*</span> math<span style="color: #333333">.</span>log(prob, <span style="color: #007020">len</span>(values))
+    <span style="color: #008800; font-weight: bold">return</span> total
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">info_attribute</span>(X_partition, y_partition):
+    <span style="color: #DD4422">&quot;&quot;&quot;Calcula medida de informação para um atributo do conjunto de dados.&quot;&quot;&quot;</span>
+    total <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+    partition_size <span style="color: #333333">=</span> y_partition<span style="color: #333333">.</span>size
+    values, indices <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>unique(X_partition, return_inverse<span style="color: #333333">=</span><span style="color: #007020">True</span>)
+    counts <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>bincount(indices)
+    partitions <span style="color: #333333">=</span> []
+    <span style="color: #008800; font-weight: bold">for</span> value, count <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">zip</span>(values, counts):
+        prob <span style="color: #333333">=</span> count <span style="color: #333333">/</span> <span style="color: #007020">float</span>(partition_size)
+        partition <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>where(X_partition<span style="color: #333333">==</span>value)
+        partitions<span style="color: #333333">.</span>append(partition)
+        partition_info <span style="color: #333333">=</span> info(y_partition[partition])
+        total <span style="color: #333333">+=</span> prob <span style="color: #333333">*</span> partition_info
+    <span style="color: #008800; font-weight: bold">return</span> total, partitions, values
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">gini</span>(X_partition, y_partition):
+    <span style="color: #DD4422">&quot;&quot;&quot;Calcula o GINI index para um atributo do conjunto de dados.&quot;&quot;&quot;</span>
+    total <span style="color: #333333">=</span> gini_index(y_partition)
+    partition_size <span style="color: #333333">=</span> y_partition<span style="color: #333333">.</span>size
+    values, indices <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>unique(X_partition, return_inverse<span style="color: #333333">=</span><span style="color: #007020">True</span>)
+    counts <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>bincount(indices)
+    partitions <span style="color: #333333">=</span> []
+    <span style="color: #008800; font-weight: bold">for</span> value, count <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">zip</span>(values, counts):
+        prob <span style="color: #333333">=</span> count <span style="color: #333333">/</span> <span style="color: #007020">float</span>(partition_size)
+        partition <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>where(X_partition<span style="color: #333333">==</span>value)
+        partitions<span style="color: #333333">.</span>append(partition)
+        partition_gini <span style="color: #333333">=</span> gini_index(y_partition[partition])
+        total <span style="color: #333333">-=</span> prob <span style="color: #333333">*</span> partition_gini
+    <span style="color: #008800; font-weight: bold">return</span> total, partitions, values
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">gini_index</span>(y_partition):
+    <span style="color: #DD4422">&quot;&quot;&quot;Calcula medida de informação para o conjunto de dados.&quot;&quot;&quot;</span>
+    total <span style="color: #333333">=</span> <span style="color: #007020">float</span>(<span style="color: #0000DD; font-weight: bold">1</span>)
+    partition_size <span style="color: #333333">=</span> y_partition<span style="color: #333333">.</span>size
+    values, indices <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>unique(y_partition, return_inverse<span style="color: #333333">=</span><span style="color: #007020">True</span>)
+    counts <span style="color: #333333">=</span> numpy<span style="color: #333333">.</span>bincount(indices)
+    <span style="color: #008800; font-weight: bold">for</span> value, count <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">zip</span>(values, counts):
+        prob <span style="color: #333333">=</span> count <span style="color: #333333">/</span> <span style="color: #007020">float</span>(partition_size)
+        total <span style="color: #333333">-=</span> prob <span style="color: #333333">**</span> <span style="color: #0000DD; font-weight: bold">2</span>
+    <span style="color: #008800; font-weight: bold">return</span> total
+</pre></div>
+
     </div>
   </div>
 </div>

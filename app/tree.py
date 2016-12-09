@@ -36,7 +36,6 @@ class DecisionTree:
 
             X_partition = node['X_partition']
             y_partition = node['y_partition']
-            print(y_partition)
 
             # Se os rótulos em y são todos da mesma classe C, então a decisão é C
             classes = numpy.unique(y_partition)
