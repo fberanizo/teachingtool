@@ -64,7 +64,7 @@ def attributes(decision_tree):
         X_partition = next_node['X_partition']
         y_partition = next_node['y_partition']
         attributes = decision_tree.calculate_attribute_selection_metric(X_partition, y_partition)
-        attributes = map(lambda attr: (attr['attribute'], attr['metric']), attributes)
+        attributes = list(map(lambda attr: (attr['attribute'], attr['metric']), attributes))
         attributes.sort(key=lambda attr: attr[1], reverse=True)
 
     return attributes, metric_name, partition
