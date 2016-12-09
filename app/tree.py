@@ -14,7 +14,7 @@ class DecisionTree:
         self.attribute_selection_method = attribute_selection_method
         self.samples_size, self.input_size = X.shape
         self.id_pool = 1
-        self.remaining_attributes = range(len(attributes))
+        self.remaining_attributes = list(range(len(attributes)))
 
         # Inicializa a árvore com a partição total dos dados de treinamento
         self.tree = dict([('id', 0), ('label', None), ('type', 'question'), ('partition', range(y.size)), ('X_partition', self.X), ('y_partition', self.y), ('value', None), ('parent', None), ('children', [])])
