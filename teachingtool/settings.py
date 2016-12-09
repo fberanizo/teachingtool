@@ -26,7 +26,7 @@ SECRET_KEY = '4+wd8edsa%i)+q=0f(=6&_8l65=6b3vfgkbbnv*6f1fz-hdy1!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['decision-tree-teaching-tool.herokuapp.com', 'localhost']
 
 
 # Application definition
