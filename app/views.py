@@ -41,7 +41,7 @@ class TreePlotView(TemplateView):
     def post(self, request):
         if request.POST.get('forward', None) is not None:
             # Adiciona nós à árvore
-            request.session['nodes'] = min(len(self.decision_tree.attributes), request.session['nodes']+1)
+            request.session['nodes'] = request.session['nodes']+1
 
         if request.POST.get('backward', None) is not None:
             # Adiciona nós à árvore

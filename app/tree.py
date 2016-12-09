@@ -17,7 +17,7 @@ class DecisionTree:
         self.remaining_attributes = range(len(attributes))
 
         # Inicializa a árvore com a partição total dos dados de treinamento
-        self.tree = dict([('id', 0), ('label', None), ('partition', range(y.size)), ('value', None), ('parent', None), ('children', [])])
+        self.tree = dict([('id', 0), ('label', None), ('partition', range(y.size)), ('X_partition', self.X), ('y_partition', self.y), ('value', None), ('parent', None), ('children', [])])
         self.nodes = []
         self.edges = []
 
@@ -34,8 +34,8 @@ class DecisionTree:
             if node['parent'] is not None:
                 self.edges.append((node['parent'], node['id']))
 
-            X_partition = self.X[node['partition']]
-            y_partition = self.y[node['partition']]
+            X_partition = node['X_partition']
+            y_partition = node['y_partition']
 
             # Se os rótulos em y são todos da mesma classe C, então a decisão é C
             classes = numpy.unique(y_partition)
@@ -65,7 +65,7 @@ class DecisionTree:
 
             # Cria um nó para cada partição
             for partition, value in zip(best_attribute['partitions'], best_attribute['values']):
-                child = dict([('id', self.id_pool), ('label', None), ('partition', partition), ('value', value), ('parent', node['id']), ('children', [])])
+                child = dict([('id', self.id_pool), ('label', None), ('partition', partition), ('X_partition', node['X_partition'][partition]), ('y_partition', node['y_partition'][partition]), ('value', value), ('parent', node['id']), ('children', [])])
                 node['children'].append(child)
                 self.queue.append(child)
                 self.id_pool += 1
