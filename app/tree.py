@@ -17,7 +17,7 @@ class DecisionTree:
         self.remaining_attributes = range(len(attributes))
 
         # Inicializa a árvore com a partição total dos dados de treinamento
-        self.tree = dict([('id', 0), ('label', None), ('partition', range(y.size)), ('X_partition', self.X), ('y_partition', self.y), ('value', None), ('parent', None), ('children', [])])
+        self.tree = dict([('id', 0), ('label', None), ('type', 'question'), ('partition', range(y.size)), ('X_partition', self.X), ('y_partition', self.y), ('value', None), ('parent', None), ('children', [])])
         self.nodes = []
         self.edges = []
 
@@ -36,11 +36,13 @@ class DecisionTree:
 
             X_partition = node['X_partition']
             y_partition = node['y_partition']
+            print(y_partition)
 
             # Se os rótulos em y são todos da mesma classe C, então a decisão é C
             classes = numpy.unique(y_partition)
             if len(classes) == 1:
-                node['label'] = 'Classe ' + classes[0]
+                node['label'] = classes[0]
+                node['type'] = 'decision'
                 self.nodes.append(node)
                 return
 
@@ -48,7 +50,8 @@ class DecisionTree:
             if len(self.remaining_attributes) == 0:
                 unique, pos = numpy.unique(y_partition, return_inverse=True)
                 counts = numpy.bincount(pos)
-                node['label'] = 'Classe ' + unique[counts.argmax()]
+                node['label'] = unique[counts.argmax()]
+                node['type'] = 'decision'
                 self.nodes.append(node)
                 return
 
@@ -58,14 +61,14 @@ class DecisionTree:
             # Escolhe o atributo com maior métrica
             best_attribute = max(attributes, key=lambda item: item['metric'])
 
-            node['label'] = best_attribute['attribute'] + '?'
+            node['label'] = best_attribute['attribute']
             self.nodes.append(node)
 
             self.remaining_attributes.remove(self.attributes.index(best_attribute['attribute']))
 
             # Cria um nó para cada partição
             for partition, value in zip(best_attribute['partitions'], best_attribute['values']):
-                child = dict([('id', self.id_pool), ('label', None), ('partition', partition), ('X_partition', node['X_partition'][partition]), ('y_partition', node['y_partition'][partition]), ('value', value), ('parent', node['id']), ('children', [])])
+                child = dict([('id', self.id_pool), ('label', None), ('type', 'question'), ('partition', partition), ('X_partition', node['X_partition'][partition]), ('y_partition', node['y_partition'][partition]), ('value', value), ('parent', node['id']), ('children', [])])
                 node['children'].append(child)
                 self.queue.append(child)
                 self.id_pool += 1

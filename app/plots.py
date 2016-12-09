@@ -18,12 +18,15 @@ def treeplot(decision_tree):
     # Cria os vértices da árvore
     Xn = [-node[0] for node in layout]
     Yn = [-node[1] for node in layout]
-    nodes = Scatter(x=Xn, y=Yn, mode='markers', marker=dict(symbol='square', size=40, color='#333'), text=None, hoverinfo='none')
+    colors = ['#333' if node['type'] == 'decision' else '#CACACA' for node in decision_tree.nodes]
+    nodes = Scatter(x=Xn, y=Yn, mode='markers', marker=dict(symbol='square', size=40, color=colors), text=None, hoverinfo='none')
 
     # Escreve rótulos nos vértices
     annotations = Annotations()
     for node in decision_tree.nodes:
-        a = Annotation(text=node['label'], x=Xn[node['id']], y=Yn[node['id']], xref='x1', yref='y1', font=dict(color='#FFF', size=9, family='"Open Sans", verdana, arial, sans-serif'), showarrow=False)
+        color = '#FFF' if node['type'] == 'decision' else '#000'
+        label = node['label'] if node['type'] == 'decision' else node['label']  + '?'
+        a = Annotation(text=label, x=Xn[node['id']], y=Yn[node['id']], xref='x1', yref='y1', font=dict(color=color, size=9, family='"Open Sans", verdana, arial, sans-serif'), showarrow=False)
         annotations.append(a)
 
     # Cria as arestas da árvore
@@ -51,10 +54,19 @@ def treeplot(decision_tree):
 
 def attributes(decision_tree):
     """"""
-    next_node = decision_tree.queue[0]
-    X_partition = decision_tree.X[next_node['partition']]
-    y_partition = decision_tree.y[next_node['partition']]
-    attributes = decision_tree.calculate_attribute_selection_metric(X_partition, y_partition)
-    attributes = map(lambda attr: (attr['attribute'], attr['metric']), attributes)
-    attributes.sort(key=lambda attr: attr[1], reverse=True)
-    return attributes
+    attributes = []
+    metric_name = 'Medida de Ganho de Informação' if decision_tree.attribute_selection_method == 'gain' else 'Índice de GINI'
+    partition = ''
+    if len(decision_tree.queue) > 0:
+        next_node = decision_tree.queue[0]
+        if next_node['parent'] is not None:
+            partition = decision_tree.nodes[next_node['parent']]['label'] + ' = ' + next_node['value']
+        X_partition = next_node['X_partition']
+        y_partition = next_node['y_partition']
+        attributes = decision_tree.calculate_attribute_selection_metric(X_partition, y_partition)
+        attributes = map(lambda attr: (attr['attribute'], attr['metric']), attributes)
+        attributes.sort(key=lambda attr: attr[1], reverse=True)
+
+    return attributes, metric_name, partition
+
+

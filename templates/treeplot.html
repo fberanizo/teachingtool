@@ -2,54 +2,56 @@
 
 {% block head %}
 {{block.super}}
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 {% endblock %}
 
 {% block content %}
 
-<form id="form" method="post" action="/app/">
-{% csrf_token %}
+
 <div class="container-fluid">
-  <div class="row" style="padding: 30px">
-    <div class="col-sm">
-      <fieldset>
-        <legend>Estratégia de seleção de atributo</legend>
-
-          <input type="radio" name="attribute_selection_strategy" id="attribute_selection_strategy_gain" value="gain" checked="checked"/>
-          <label for="attribute_selection_strategy_gain">Ganho de Informação</label>
-          <input type="radio" name="attribute_selection_strategy" id="attribute_selection_strategy_gini" value="gini"/>
-          <label for="attribute_selection_strategy_gini">Índice Gini</label>
-
-      </fieldset>
-    </div>
-  </div>
-
-  <div class="row" style="padding: 20px">
-    <div class="col-sm">
-    </div>
-  </div>
 
   <div class="row" style="margin: 10px 0px; height: 100%">
     <div class="col-sm-8 no-float">
+      <h2>Implementação didática de árvore de decisão</h2>
+
+      <p></p>
+
       {{plot|safe}}
     </div>
     <div class="col-sm-4 no-float" style="padding: 10px; height: 100%">
-      <h5><center>Controle aqui a construção da árvore</center></h5>
-      <button type="submit" name="backward">
-        <i class="fa fa-backward" aria-hidden="true"></i>
-      </button>
-      <button type="submit" name="forward">
-        <i class="fa fa-forward" aria-hidden="true"></i>
-      </button>
+      <form id="form" method="post" action="/app/">
+        {% csrf_token %}
+        <h5>Estratégia de seleção de atributo</h5>
+        <label for="attribute_selection_strategy_gain" style="cursor: pointer">
+          <input type="radio" name="attribute_selection_strategy" id="attribute_selection_strategy_gain" value="gain" {% if attribute_selection_method == 'gain' %} checked="checked" {% endif %} />
+        Ganho de Informação</label>
+        <label for="attribute_selection_strategy_gini" style="cursor: pointer">
+          <input type="radio" name="attribute_selection_strategy" id="attribute_selection_strategy_gini" value="gini" {% if attribute_selection_method == 'gini' %} checked="checked" {% endif %} />
+        Índice Gini</label>
 
-      <h6>Atributos</h6>
-      {% for name, metric in attributes %}
-          <p>{{name}}, {{metric}}</p>
-      {% endfor %}
+        <p>&nbsp;</p>
+
+        <h5>Controle aqui a construção da árvore</h5>
+        <button type="submit" name="backward" class="btn btn-default" {% if used_attributes == 0 %} disabled="disabled" {% endif %}>
+          <span class="fa fa-backward" aria-hidden="true"></span> Remover Vértice
+        </button>
+        <button type="submit" name="forward" class="btn btn-default" {% if queue|length == 0 %} disabled="disabled" {% endif %}>
+          Adicionar Vértice <span class="fa fa-forward" aria-hidden="true"></span>
+        </button>
+
+        <p>&nbsp;</p>
+
+        <h5>Próxima partição: {{partition}}</h5>
+
+        <h5>Atributos ainda não utilizados</h5>
+        {% for name, metric in attributes %}
+            <button type="button" class="btn {% if forloop.first %} btn-success {% else %} btn-warning {% endif %}" data-toggle="tooltip" data-placement="top" title="{{metric_name}}: {{metric}}" style="margin-bottom: 10px">{{name}}</button>
+        {% endfor %}
+      </form>
     </div>
   </div>
 </div>
-</form>
+
 <!-- /.container -->
 
 {% endblock %}
+
